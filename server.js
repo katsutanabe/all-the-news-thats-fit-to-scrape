@@ -1,22 +1,23 @@
-//dependencies
-var bodyParser = require("body-parser");
-var mongoose = require("mongoose");
-var logger = require("morgan");
+var express    = require('express'),
+    bodyParser = require('body-parser'),
+    exphbs     = require('express-handlebars'),
+    logger     = require("morgan");
 
-//initialize Express app
-var express = require("express");
+var PORT = process.env.PORT || 3000;
+
+// Initialize Express
 var app = express();
 
+// Use morgan logger for logging requests
 app.use(logger("dev"));
-app.use(
-  bodyParser.urlencoded({
-    extended: false
-  })
-);
+// Parse request body as JSON
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+// Make public a static folder
+app.use(express.static("public"));
 
-app.use(express.static(process.cwd() + "/public"));
-//Require set up handlebars
-var exphbs = require("express-handlebars");
+// Handlebars
+app.set('views', './views')
 app.engine(
   "handlebars",
   exphbs({
@@ -25,22 +26,14 @@ app.engine(
 );
 app.set("view engine", "handlebars");
 
-//connecting to MongoDB
-//mongoose.connect("mongodb://localhost/scraped_news");
-const MONGODB_URI =
-  process.env.MONGODB_URI || "mongodb://localhost/scraper_news";
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
+// Routes
+require('./routes/apiRoutes')(app)
 
-var db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", function() {
-  console.log("Connected to Mongoose!");
-});
-
-var routes = require("./controller/controller.js");
-app.use("/", routes);
-//Create localhost port
-var port = process.env.PORT || 3000;
-app.listen(port, function() {
-  console.log("Listening on PORT " + port);
-});
+// Start the server
+app.listen(PORT, function() {
+    console.log(
+      "==> 🌎  Listening on port %s. Visit http://localhost:%s/ in your browser.",
+      PORT,
+      PORT
+    );
+  });
