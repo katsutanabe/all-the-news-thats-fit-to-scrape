@@ -1,23 +1,22 @@
-var express    = require('express'),
-    bodyParser = require('body-parser'),
-    exphbs     = require('express-handlebars'),
-    logger     = require("morgan");
+//dependencies
+var bodyParser = require("body-parser");
+var mongoose = require("mongoose");
+var logger = require("morgan");
 
-var PORT = process.env.PORT || 3000;
-
-// Initialize Express
+//initialize Express app
+var express = require("express");
 var app = express();
 
-// Use morgan logger for logging requests
 app.use(logger("dev"));
-// Parse request body as JSON
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-// Make public a static folder
-app.use(express.static("public"));
+app.use(
+  bodyParser.urlencoded({
+    extended: false
+  })
+);
 
-// Handlebars
-app.set('views', './views')
+app.use(express.static(process.cwd() + "/public"));
+//Require set up handlebars
+var exphbs = require("express-handlebars");
 app.engine(
   "handlebars",
   exphbs({
@@ -26,14 +25,22 @@ app.engine(
 );
 app.set("view engine", "handlebars");
 
-// Routes
-require('./routes/apiRoutes')(app)
+//connecting to MongoDB
+//mongoose.connect("mongodb://localhost/scraped_news");
+const MONGODB_URI =
+  process.env.MONGODB_URI || "mongodb://localhost/scraper_news";
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
-// Start the server
-app.listen(PORT, function() {
-    console.log(
-      "==> 🌎  Listening on port %s. Visit http://localhost:%s/ in your browser.",
-      PORT,
-      PORT
-    );
-  });
+var db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", function() {
+  console.log("Connected to Mongoose!");
+});
+
+var routes = require("./controller/controller.js");
+app.use("/", routes);
+//Create localhost port
+var port = process.env.PORT || 5000;
+app.listen(port, function() {
+  console.log("Listening on PORT " + port);
+});
