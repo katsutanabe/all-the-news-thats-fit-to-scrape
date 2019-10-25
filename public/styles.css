@@ -1,6 +1,6 @@
 body {
     background-size: 600px;
-    font-family: "Oswald", sans-serif;
+    font-family: 'Raleway', sans-serif;
     font-size: 16px;
     display: flex;
     min-height: 100vh;
@@ -8,6 +8,8 @@ body {
   }
   main {
     flex: 1 0 auto;
+    font-family: 'Raleway', sans-serif;
+    background-image: url("https://cdn.pixabay.com/photo/2014/05/21/22/28/old-newspaper-350376_1280.jpg");
   }
   .articleBody {
     height: 200px;
@@ -35,5 +37,19 @@ body {
     color: #635f60;
   }
   .topnav {
-    background-color: #635f60;
+    background: linear-gradient(to right,
+    rgb(105, 17, 17),
+    rgb(44, 6, 6),
+    rgb(5, 12, 107));
+  }
+  h1 {
+    font-family: 'Galada', cursive;
+  }
+
+  .footer {
+    position: fixed;
+    background: linear-gradient(to right,
+    rgb(105, 17, 17),
+    rgb(44, 6, 6),
+    rgb(5, 12, 107));
   }
